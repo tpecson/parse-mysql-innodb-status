@@ -266,13 +266,13 @@ def deal_log(v_data):
 
 def print_help():
     print("Usage:")
-    print "./mysql_innodb_status.py -h <database_ip> -u <username> -p <password>"
-    print "    -h : database ip address/domain name"
-    print "    -u : username"
-    print "    -p : password"
-    print "    -k : print specified items(section.key1,section.key2) or section.*"
-    print "    -n : interval time"
-    print "    -w : item width"
+    print ("./mysql_innodb_status.py -h <database_ip> -u <username> -p <password>")
+    print ("    -h : database ip address/domain name")
+    print ("    -u : username")
+    print ("    -p : password")
+    print ("    -k : print specified items(section.key1,section.key2) or section.*")
+    print ("    -n : interval time")
+    print ("    -w : item width")
 
 if __name__ == "__main__":
     interval = 0
@@ -292,7 +292,7 @@ if __name__ == "__main__":
                 interval=int(v)
             elif o=="-w":
                 width=int(v)
-    except getopt.GetoptError,msg:
+    except getopt.GetoptError():
         print_help()
         exit()
 
@@ -301,33 +301,33 @@ if __name__ == "__main__":
     v_dict = deal_log(v_innodb_status)
     if keys.upper()=="ALL":
         for section in sorted(v_dict.keys()):
-            print
-            print '[',section,']'
-            print '-'*80
+            print ()
+            print ('[',section,']')
+            print ('-'*80)
             for key in sorted(v_dict[section]):
-                print key.ljust(40),v_dict[section][key]['val'].rjust(20),v_dict[section][key]['unit'].rjust(15)
+                print (key.ljust(40),v_dict[section][key]['val'].rjust(20),v_dict[section][key]['unit'].rjust(15))
     else:
-        if keys.find('.*')<>-1:
+        if keys.find('.*')!=-1:
             section = keys.replace('.*','')
             keys = section+'.'+(','+section+'.').join(v_dict[section].keys())
         if interval==0:
-            print time.strftime("%H:%M:%S",time.localtime(time.time()))
+            print (time.strftime("%H:%M:%S",time.localtime(time.time())),)
             for key in keys.split(','):
-                print key.ljust(45),v_dict[key.split('.')[0]][key.split('.')[1]]['val'].rjust(30)
+                print (key.ljust(45),v_dict[key.split('.')[0]][key.split('.')[1]]['val'].rjust(30),)
         else:
             iredraw=1
             while True:
                 if iredraw==1:
-                    print "\033[1;31;40m%s\033[0m" % "Time".ljust(9),
+                    print ("\033[1;31;40m%s\033[0m" % "Time".ljust(9))
                     for key in keys.split(','):
-                        print "\033[1;31;40m%s\033[0m" % key.split('.')[1][:(width)].rjust(width),
-                    print
-                print time.strftime("%H:%M:%S",time.localtime(time.time())).ljust(9),
+                        print ("\033[1;31;40m%s\033[0m" % key.split('.')[1][:(width)].rjust(width),)
+                    print ()
+                print (time.strftime("%H:%M:%S",time.localtime(time.time())).ljust(9),)
                 for key in keys.split(','):
-                    print v_dict[key.split('.')[0]][key.split('.')[1]]['val'][:(width)].rjust(width),
+                    print (v_dict[key.split('.')[0]][key.split('.')[1]]['val'][:(width)].rjust(width),)
                 print
                 time.sleep(interval)
                 v_innodb_status = []
                 v_innodb_status = query_innodb_status(db,username,pwd)
                 v_dict = deal_log(v_innodb_status)
-              iredraw = 1 if iredraw >5 else iredraw + 1
+                iredraw = 1 if iredraw >5 else iredraw + 1
